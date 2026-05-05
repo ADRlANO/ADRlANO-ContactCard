@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export function AddContact() {
     return (
         <div className="container mt-5">
@@ -20,6 +22,7 @@ export function AddContact() {
                     <input type="text" className="form-control" placeholder="Enter address" />
                 </div>
                 <button type="submit" className="btn btn-primary w-100">Save</button>
+                <Link to="/">or get back to contacts</Link>
             </form>
         </div>
     );
