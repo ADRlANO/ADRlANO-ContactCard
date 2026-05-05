@@ -18,6 +18,8 @@ export function AddContact() {
     async function handleSubmit(e) {
         e.preventDefault();
 
+        await verifyAgenda();
+
         const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts`
         const options = {
             method: 'POST',
@@ -29,6 +31,20 @@ export function AddContact() {
         const data = await response.json()
 
         console.log("data >>>> ", data)
+    }
+
+    async function verifyAgenda() {
+        const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+        const response = await fetch(url)
+
+        if(response.status === 404) {
+            const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+            const options = {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" }
+            }
+            await fetch(url, options)
+        }
     }
 
     return (
