@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MY_AGENDA_SLUG = "tumama"
 
-const SAMPLE_CONTACTS = [
+const _SAMPLE_CONTACTS = [
   {
     id: crypto.randomUUID(),
     name: "Mike Shinoda",
@@ -92,50 +92,43 @@ const ContactCard = ({ contact, onEdit, onDelete }) => (
   </div>
 );
 
-const Contacts = ({ onEdit, onDelete }) => {
-  const [contacts, setContacts] = useState(SAMPLE_CONTACTS)
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function fetchContacts() {
-    const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts`
-
-    setIsLoading(true)
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    setContacts(prevContacts => [...prevContacts, data.contacts]);
-    setIsLoading(false)
-  }
-
-  useEffect(() => {
-    fetchContacts();
-  }, [])
-
-  if (isLoading) return (<div>Loading contacts...</div>)
-
-  return (
-    <div>
-      {contacts.map((contact) => (
-        <ContactCard
-          key={contact.id}
-          contact={contact}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
-    </div>
-  )
-};
+const Contacts = ({ contacts, onEdit, onDelete }) => (
+  <div>
+    {contacts.map((contact) => (
+      <ContactCard
+        key={contact.id}
+        contact={contact}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    ))}
+  </div>
+);
 
 export const Home = () => {
   const navigate = useNavigate();
+  const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
-  const handleEdit = (id) => navigate(`/edit/${id}`);
+  async function fetchContacts() {
+    setIsLoading(true);
+    const response = await fetch(`https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts`);
+    const data = await response.json();
+    setContacts(data.contacts);
+    setIsLoading(false);
+  }
+
+  useEffect(() => { fetchContacts(); }, []);
+
+  const handleEdit = (id) => navigate(`/update-contact/${id}`);
   const handleDeleteRequest = (id) => setPendingDeleteId(id);
-  const handleDeleteConfirm = () => {
-    console.log("Deleted contact", pendingDeleteId);
+  const handleDeleteConfirm = async () => {
+    await fetch(
+      `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts/${pendingDeleteId}`,
+      { method: "DELETE" }
+    );
+    setContacts((prev) => prev.filter((c) => c.id !== pendingDeleteId));
     setPendingDeleteId(null);
   };
 
@@ -146,10 +139,10 @@ export const Home = () => {
         onCancel={() => setPendingDeleteId(null)}
         onConfirm={handleDeleteConfirm}
       />
-      <Contacts
-        onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
-      />
+      {isLoading
+        ? <div>Loading contacts...</div>
+        : <Contacts contacts={contacts} onEdit={handleEdit} onDelete={handleDeleteRequest} />
+      }
     </div>
   );
 };
