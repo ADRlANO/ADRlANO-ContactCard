@@ -1,5 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+const MY_AGENDA_SLUG = "tumama"
 
 const SAMPLE_CONTACTS = [
   {
@@ -90,18 +92,41 @@ const ContactCard = ({ contact, onEdit, onDelete }) => (
   </div>
 );
 
-const Contacts = ({ contacts, onEdit, onDelete }) => (
-  <div>
-    {contacts.map((contact) => (
-      <ContactCard
-        key={contact.id}
-        contact={contact}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
-    ))}
-  </div>
-);
+const Contacts = ({ onEdit, onDelete }) => {
+  const [contacts, setContacts] = useState(SAMPLE_CONTACTS)
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function fetchContacts() {
+    const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts`
+
+    setIsLoading(true)
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    setContacts(prevContacts => [...prevContacts, data.contacts]);
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    fetchContacts();
+  }, [])
+
+  if (isLoading) return (<div>Loading contacts...</div>)
+
+  return (
+    <div>
+      {contacts.map((contact) => (
+        <ContactCard
+          key={contact.id}
+          contact={contact}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
+  )
+};
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -122,7 +147,6 @@ export const Home = () => {
         onConfirm={handleDeleteConfirm}
       />
       <Contacts
-        contacts={SAMPLE_CONTACTS}
         onEdit={handleEdit}
         onDelete={handleDeleteRequest}
       />
