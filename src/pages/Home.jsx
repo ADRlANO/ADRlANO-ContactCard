@@ -1,12 +1,97 @@
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useNavigate } from "react-router-dom";
+
+const SAMPLE_CONTACTS = [
+  {
+    id: crypto.randomUUID(),
+    name: "Mike Shinoda",
+    address: "5842 Hillcrest Rd",
+    phone: "(870) 288-4149",
+    email: "mike.ana@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Mike Shinoda",
+    address: "5842 Hillcrest Rd",
+    phone: "(870) 288-4149",
+    email: "mike.ana@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Mike Shinoda",
+    address: "5842 Hillcrest Rd",
+    phone: "(870) 288-4149",
+    email: "mike.ana@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Mike Shinoda",
+    address: "5842 Hillcrest Rd",
+    phone: "(870) 288-4149",
+    email: "mike.ana@example.com",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+];
+
+const ContactCard = ({ contact, onEdit, onDelete }) => (
+  <div className="d-flex align-items-center border-bottom py-3">
+    <img
+      src={contact.avatar}
+      alt={contact.name}
+      className="rounded-circle me-4"
+      style={{ width: "80px", height: "80px", objectFit: "cover" }}
+    />
+    <div className="flex-grow-1">
+      <h5 className="mb-1">{contact.name}</h5>
+      <p className="mb-0 text-muted small">
+        <i className="fas fa-map-marker-alt me-2"></i>{contact.address}
+      </p>
+      <p className="mb-0 text-muted small">
+        <i className="fas fa-phone me-2"></i>{contact.phone}
+      </p>
+      <p className="mb-0 text-muted small">
+        <i className="fas fa-envelope me-2"></i>{contact.email}
+      </p>
+    </div>
+    <div className="d-flex gap-3">
+      <button className="btn btn-link p-0 text-dark" onClick={() => onEdit(contact.id)} aria-label="Edit contact">
+        <i className="fas fa-pencil-alt"></i>
+      </button>
+      <button className="btn btn-link p-0 text-dark" onClick={() => onDelete(contact.id)} aria-label="Delete contact">
+        <i className="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+);
+
+const Contacts = ({ contacts, onEdit, onDelete }) => (
+  <div>
+    {contacts.map((contact) => (
+      <ContactCard
+        key={contact.id}
+        contact={contact}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    ))}
+  </div>
+);
 
 export const Home = () => {
+  const navigate = useNavigate();
 
-  const {store, dispatch} = useGlobalReducer()
+  const handleEdit = (id) => navigate(`/edit/${id}`);
+  const handleDelete = (id) => console.log("Delete contact", id);
 
-	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-		</div>
-	);
-}; 
+  return (
+    <div className="container mt-4">
+      <Contacts
+        contacts={SAMPLE_CONTACTS}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+    </div>
+  );
+};
