@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SAMPLE_CONTACTS = [
@@ -34,6 +35,29 @@ const SAMPLE_CONTACTS = [
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
   },
 ];
+
+const ConfirmDeleteModal = ({ show, onCancel, onConfirm }) => {
+  if (!show) return null;
+  return (
+    <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.3)" }}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header border-0 pb-0">
+            <h5 className="modal-title fw-bold">Are you sure?</h5>
+            <button type="button" className="btn-close" onClick={onCancel} aria-label="Close" />
+          </div>
+          <div className="modal-body">
+            <p>If you delete this thing the entire universe will go down!</p>
+          </div>
+          <div className="modal-footer border-0 pt-0">
+            <button className="btn btn-primary" onClick={onCancel}>Oh no!</button>
+            <button className="btn btn-secondary" onClick={onConfirm}>Yes baby!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ContactCard = ({ contact, onEdit, onDelete }) => (
   <div className="d-flex align-items-center border-bottom py-3">
@@ -81,16 +105,26 @@ const Contacts = ({ contacts, onEdit, onDelete }) => (
 
 export const Home = () => {
   const navigate = useNavigate();
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
   const handleEdit = (id) => navigate(`/edit/${id}`);
-  const handleDelete = (id) => console.log("Delete contact", id);
+  const handleDeleteRequest = (id) => setPendingDeleteId(id);
+  const handleDeleteConfirm = () => {
+    console.log("Deleted contact", pendingDeleteId);
+    setPendingDeleteId(null);
+  };
 
   return (
     <div className="container mt-4">
+      <ConfirmDeleteModal
+        show={pendingDeleteId !== null}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={handleDeleteConfirm}
+      />
       <Contacts
         contacts={SAMPLE_CONTACTS}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={handleDeleteRequest}
       />
     </div>
   );
