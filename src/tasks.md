@@ -2,14 +2,16 @@
 - [x] UI - ContactCard
 - [x] UI - Contacts
 - [x] UI - AddContact
-- [ ] UI - ConfirmDeleteModal
+- [x] UI - ConfirmDeleteModal
 - [x] Link - Contacts with AddContact
 - [x] Link - AddContact with Contacts
-- [ ] Action - Read
+- [x] Action - Read
 - [x] Action - Create
 - [ ] Action - Update
-- [ ] Action - Delete
+- [x] Action - Delete
 - [ ] Routing - ScrollToTop 
+- [ ] Context API
+- [ ] Custom Hooks
 
 ------
 

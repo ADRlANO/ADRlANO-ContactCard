@@ -113,13 +113,31 @@ export const Home = () => {
 
   async function fetchContacts() {
     setIsLoading(true);
+    await verifyAgenda();
     const response = await fetch(`https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}/contacts`);
     const data = await response.json();
+
     setContacts(data.contacts);
     setIsLoading(false);
   }
 
-  useEffect(() => { fetchContacts(); }, []);
+  async function verifyAgenda() {
+      const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+      const response = await fetch(url)
+
+      if(response.status === 404) {
+          const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+          const options = {
+              method: 'POST',
+              headers: { "Content-Type": "application/json" }
+          }
+          await fetch(url, options)
+      }
+  }
+
+  useEffect(() => {
+    fetchContacts()
+  }, []);
 
   const handleEdit = (id) => navigate(`/update-contact/${id}`);
   const handleDeleteRequest = (id) => setPendingDeleteId(id);
