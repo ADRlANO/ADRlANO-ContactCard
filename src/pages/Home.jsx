@@ -3,41 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const MY_AGENDA_SLUG = "tumama"
 
-const _SAMPLE_CONTACTS = [
-  {
-    id: crypto.randomUUID(),
-    name: "Mike Shinoda",
-    address: "5842 Hillcrest Rd",
-    phone: "(870) 288-4149",
-    email: "mike.ana@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Mike Shinoda",
-    address: "5842 Hillcrest Rd",
-    phone: "(870) 288-4149",
-    email: "mike.ana@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Mike Shinoda",
-    address: "5842 Hillcrest Rd",
-    phone: "(870) 288-4149",
-    email: "mike.ana@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: crypto.randomUUID(),
-    name: "Mike Shinoda",
-    address: "5842 Hillcrest Rd",
-    phone: "(870) 288-4149",
-    email: "mike.ana@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-];
-
 const ConfirmDeleteModal = ({ show, onCancel, onConfirm }) => {
   if (!show) return null;
   return (
@@ -64,7 +29,7 @@ const ConfirmDeleteModal = ({ show, onCancel, onConfirm }) => {
 const ContactCard = ({ contact, onEdit, onDelete }) => (
   <div className="d-flex align-items-center border-bottom py-3">
     <img
-      src={contact.avatar}
+      src="https://images.pexels.com/photos/29526909/pexels-photo-29526909.jpeg"
       alt={contact.name}
       className="rounded-circle me-4"
       style={{ width: "80px", height: "80px", objectFit: "cover" }}
@@ -82,7 +47,7 @@ const ContactCard = ({ contact, onEdit, onDelete }) => (
       </p>
     </div>
     <div className="d-flex gap-3">
-      <button className="btn btn-link p-0 text-dark" onClick={() => onEdit(contact.id)} aria-label="Edit contact">
+      <button className="btn btn-link p-0 text-dark" onClick={() => onEdit(contact)} aria-label="Edit contact">
         <i className="fas fa-pencil-alt"></i>
       </button>
       <button className="btn btn-link p-0 text-dark" onClick={() => onDelete(contact.id)} aria-label="Delete contact">
@@ -122,24 +87,26 @@ export const Home = () => {
   }
 
   async function verifyAgenda() {
-      const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
-      const response = await fetch(url)
+    const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+    const response = await fetch(url)
 
-      if(response.status === 404) {
-          const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
-          const options = {
-              method: 'POST',
-              headers: { "Content-Type": "application/json" }
-          }
-          await fetch(url, options)
-      }
+    if(response.status === 404) {
+        const url = `https://playground.4geeks.com/contact/agendas/${MY_AGENDA_SLUG}`
+        const options = {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" }
+        }
+        await fetch(url, options)
+    }
   }
 
   useEffect(() => {
     fetchContacts()
   }, []);
-
-  const handleEdit = (id) => navigate(`/update-contact/${id}`);
+  
+  const handleEdit = (contact) => {
+    navigate(`/update-contact?contact_id=${contact.id}&email=${contact.email}&phone=${contact.phone}&name=${contact.name}&address=${contact.address}`);
+  }
   const handleDeleteRequest = (id) => setPendingDeleteId(id);
   const handleDeleteConfirm = async () => {
     await fetch(
